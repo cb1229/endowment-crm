@@ -125,7 +125,8 @@ export function NoteDetailSheet({ noteId, open, onOpenChange, onSuccess }: NoteD
 
       if (response.ok) {
         const updatedNote = await response.json();
-        setNote(updatedNote);
+        // Preserve the entities when updating the note
+        setNote(prev => prev ? { ...prev, ...updatedNote } : updatedNote);
         setIsEditing(false);
         onSuccess?.();
       }
