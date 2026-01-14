@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { NoteCard } from '@/components/note-card';
 import { Plus, Search } from 'lucide-react';
+import Link from 'next/link';
 
 type MarketFilter = 'all' | 'public_markets' | 'private_markets';
 
@@ -47,23 +48,25 @@ export default function HomePage() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <h1 className="text-2xl font-bold">Endowment CRM</h1>
+              <Link href="/" className="text-xl font-medium">
+                Endowment CRM
+              </Link>
               <nav className="flex items-center gap-6 text-sm">
-                <a href="/" className="font-medium text-foreground">
+                <Link href="/" className="font-medium text-foreground">
                   Intelligence
-                </a>
-                <a href="/pipeline" className="text-muted-foreground hover:text-foreground transition-colors">
+                </Link>
+                <Link href="/pipeline" className="text-muted-foreground hover:text-foreground transition-colors">
                   Pipeline
-                </a>
-                <a href="/firms" className="text-muted-foreground hover:text-foreground transition-colors">
+                </Link>
+                <Link href="/firms" className="text-muted-foreground hover:text-foreground transition-colors">
                   Firms
-                </a>
-                <a href="/funds" className="text-muted-foreground hover:text-foreground transition-colors">
+                </Link>
+                <Link href="/funds" className="text-muted-foreground hover:text-foreground transition-colors">
                   Funds
-                </a>
-                <a href="/companies" className="text-muted-foreground hover:text-foreground transition-colors">
+                </Link>
+                <Link href="/companies" className="text-muted-foreground hover:text-foreground transition-colors">
                   Companies
-                </a>
+                </Link>
               </nav>
             </div>
             <div className="flex items-center gap-3">
@@ -81,9 +84,9 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Recent Intelligence</h2>
-          <p className="text-muted-foreground">
+        <div className="mb-6">
+          <h2 className="text-2xl font-medium mb-1">Recent Intelligence</h2>
+          <p className="text-sm text-muted-foreground">
             Latest notes, meetings, and research across your portfolio
           </p>
         </div>
@@ -98,15 +101,15 @@ export default function HomePage() {
         </Tabs>
 
         {/* Notes Feed */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="text-muted-foreground">Loading notes...</div>
+              <div className="text-sm text-muted-foreground">Loading notes...</div>
             </div>
           ) : notes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
-              <p className="text-muted-foreground mb-4">No notes found</p>
-              <Button>
+              <p className="text-sm text-muted-foreground mb-4">No notes found</p>
+              <Button size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 Create your first note
               </Button>
