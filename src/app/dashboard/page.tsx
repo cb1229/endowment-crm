@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { StatsCard } from '@/components/stats-card';
-import { Building2, TrendingUp, Building, Briefcase, Users, DollarSign } from 'lucide-react';
-import Link from 'next/link';
+import { PageHeader } from '@/components/page-header';
+import { Building2, TrendingUp, Building, Briefcase } from 'lucide-react';
 
 interface DashboardStats {
   firms: { total: number; publicMarkets: number; privateMarkets: number };
@@ -75,49 +75,26 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background bg-dot-pattern flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-sm text-muted-foreground">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background bg-dot-pattern">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <Link href="/" className="text-xl font-medium tracking-tight">
-                Endowment CRM
-              </Link>
-              <nav className="flex items-center gap-6 text-sm">
-                <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Intelligence
-                </Link>
-                <Link href="/pipeline" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Pipeline
-                </Link>
-                <Link href="/dashboard" className="font-medium text-foreground">
-                  Dashboard
-                </Link>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen">
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard' }
+        ]}
+        title="Analytics Dashboard"
+        description="Portfolio overview and key metrics"
+      />
 
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-medium tracking-tight mb-1">Analytics Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            Portfolio overview and key metrics
-          </p>
-        </div>
-
+      <div className="p-6 space-y-6">
         {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Firms"
             value={stats?.firms.total || 0}
@@ -145,8 +122,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Deal Pipeline Breakdown */}
-        <div className="mb-8">
-          <h2 className="text-xl font-medium tracking-tight mb-4">Deal Pipeline</h2>
+        <div className="paper-container p-6">
+          <h2 className="text-xl font-semibold tracking-tight mb-4">Deal Pipeline</h2>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <StatsCard
               title="Triage"
@@ -177,8 +154,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Deal Priority Breakdown */}
-        <div>
-          <h2 className="text-xl font-medium tracking-tight mb-4">Deal Priority</h2>
+        <div className="paper-container p-6">
+          <h2 className="text-xl font-semibold tracking-tight mb-4">Deal Priority</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StatsCard
               title="High Priority"
@@ -200,7 +177,7 @@ export default function DashboardPage() {
             />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

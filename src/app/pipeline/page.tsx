@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Briefcase, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DealSheet } from '@/components/deal-sheet';
 import { FilterTabs } from '@/components/filter-tabs';
-import Link from 'next/link';
+import { PageHeader } from '@/components/page-header';
 import {
   DndContext,
   DragOverlay,
@@ -67,12 +67,12 @@ function DealCard({ deal }: { deal: Deal }) {
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between mb-2">
             <CardTitle className="text-sm tracking-tight">{deal.name}</CardTitle>
-            <Badge variant="outline" className={`text-xs rounded-full ${
-              deal.priority === 'high' ? 'badge-red' :
-              deal.priority === 'medium' ? 'badge-yellow' : 'badge-gray'
+            <span className={`status-pill ${
+              deal.priority === 'high' ? 'status-high' :
+              deal.priority === 'medium' ? 'status-medium' : 'status-low'
             }`}>
               {deal.priority}
-            </Badge>
+            </span>
           </div>
         </CardHeader>
         <CardContent>
@@ -181,57 +181,25 @@ export default function PipelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background bg-dot-pattern">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <Link href="/" className="text-xl font-medium tracking-tight">
-                Endowment CRM
-              </Link>
-              <nav className="flex items-center gap-6 text-sm">
-                <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Intelligence
-                </Link>
-                <Link href="/pipeline" className="font-medium text-foreground">
-                  Pipeline
-                </Link>
-                <Link href="/firms" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Firms
-                </Link>
-                <Link href="/funds" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Funds
-                </Link>
-                <Link href="/companies" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Companies
-                </Link>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
-        <div className="mb-6 flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Briefcase className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-medium tracking-tight">Deal Pipeline</h1>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Drag deals between stages to update their status
-            </p>
-          </div>
+    <div className="min-h-screen">
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Pipeline' }
+        ]}
+        title="Deal Pipeline"
+        description="Drag deals between stages to update their status"
+        actions={
           <Button onClick={() => setDealSheetOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add Deal
           </Button>
-        </div>
+        }
+      />
 
+      <div className="p-6 space-y-6">
         {/* Priority Filter */}
-        <div className="mb-4">
+        <div className="paper-container p-6">
           <FilterTabs
             value={priorityFilter}
             onValueChange={(v) => setPriorityFilter(v as PriorityFilter)}
@@ -291,7 +259,7 @@ export default function PipelinePage() {
             </DragOverlay>
           </DndContext>
         )}
-      </main>
+      </div>
 
       <DealSheet
         open={dealSheetOpen}
