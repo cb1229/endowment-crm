@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { noteEntityTags, firms, funds, companies } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 
+// Mark this route as dynamic
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
