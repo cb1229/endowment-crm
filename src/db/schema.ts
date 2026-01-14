@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, pgEnum, integer, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, pgEnum, integer, boolean, bigint } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Enums
@@ -128,3 +128,20 @@ export type NoteEntityTag = typeof noteEntityTags.$inferSelect;
 export type NewNoteEntityTag = typeof noteEntityTags.$inferInsert;
 export type Deal = typeof deals.$inferSelect;
 export type NewDeal = typeof deals.$inferInsert;
+
+// File Attachments
+export const fileAttachments = pgTable('file_attachments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  fileName: text('file_name').notNull(),
+  filePath: text('file_path').notNull(),
+  fileSize: bigint('file_size', { mode: 'number' }).notNull(),
+  fileType: text('file_type').notNull(),
+  entityType: entityTypeEnum('entity_type'),
+  entityId: uuid('entity_id'),
+  noteId: uuid('note_id').references(() => notes.id, { onDelete: 'cascade' }),
+  uploadedBy: text('uploaded_by').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type FileAttachment = typeof fileAttachments.$inferSelect;
+export type NewFileAttachment = typeof fileAttachments.$inferInsert;

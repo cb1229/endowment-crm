@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { NoteCard } from '@/components/note-card';
+import { FileUpload } from '@/components/file-upload';
 import Link from 'next/link';
 
 interface Firm {
@@ -193,6 +194,7 @@ export default function FirmDetailPage({ params }: { params: { id: string } }) {
             <TabsTrigger value="funds">Funds ({firm.funds.length})</TabsTrigger>
             <TabsTrigger value="notes">Notes ({firm.notes.length})</TabsTrigger>
             <TabsTrigger value="deals">Deals ({firm.deals.length})</TabsTrigger>
+            <TabsTrigger value="files">Files</TabsTrigger>
           </TabsList>
 
           <TabsContent value="funds" className="mt-6">
@@ -284,6 +286,13 @@ export default function FirmDetailPage({ params }: { params: { id: string } }) {
                 ))}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="files" className="mt-6">
+            <FileUpload
+              entityType="firm"
+              entityId={firm.id}
+            />
           </TabsContent>
         </Tabs>
       </main>
