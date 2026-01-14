@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Briefcase } from 'lucide-react';
+import { Briefcase, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DealSheet } from '@/components/deal-sheet';
 import Link from 'next/link';
 import {
   DndContext,
@@ -92,6 +94,7 @@ export default function PipelinePage() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
+  const [dealSheetOpen, setDealSheetOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -195,14 +198,20 @@ export default function PipelinePage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Briefcase className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-medium tracking-tight">Deal Pipeline</h1>
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Briefcase className="h-6 w-6 text-primary" />
+              <h1 className="text-2xl font-medium tracking-tight">Deal Pipeline</h1>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Drag deals between stages to update their status
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Drag deals between stages to update their status
-          </p>
+          <Button onClick={() => setDealSheetOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Deal
+          </Button>
         </div>
 
         {/* Kanban Board */}
@@ -253,6 +262,12 @@ export default function PipelinePage() {
           </DndContext>
         )}
       </main>
+
+      <DealSheet
+        open={dealSheetOpen}
+        onOpenChange={setDealSheetOpen}
+        onSuccess={fetchDeals}
+      />
     </div>
   );
 }
