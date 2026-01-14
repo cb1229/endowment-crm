@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, ExternalLink } from 'lucide-react';
+import { TrendingUp, ExternalLink, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { FundSheet } from '@/components/fund-sheet';
 import Link from 'next/link';
 
 interface Fund {
@@ -31,23 +33,24 @@ interface Fund {
 export default function FundsPage() {
   const [funds, setFunds] = useState<Fund[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const fetchFunds = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/funds');
+      if (response.ok) {
+        const data = await response.json();
+        setFunds(data);
+      }
+    } catch (error) {
+      console.error('Error fetching funds:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchFunds() {
-      setIsLoading(true);
-      try {
-        const response = await fetch('/api/funds');
-        if (response.ok) {
-          const data = await response.json();
-          setFunds(data);
-        }
-      } catch (error) {
-        console.error('Error fetching funds:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchFunds();
   }, []);
 
@@ -85,14 +88,20 @@ export default function FundsPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <TrendingUp className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-medium tracking-tight">Investment Funds</h1>
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <TrendingUp className="h-6 w-6 text-primary" />
+              <h1 className="text-2xl font-medium tracking-tight">Investment Funds</h1>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Track and manage fund commitments and performance
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Track and manage fund commitments and performance
-          </p>
+          <Button onClick={() => setSheetOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Fund
+          </Button>
         </div>
 
         {/* Table */}
@@ -157,6 +166,12 @@ export default function FundsPage() {
           </div>
         )}
       </main>
+
+      <FundSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        onSuccess={fetchFunds}
+      />
     </div>
   );
 }

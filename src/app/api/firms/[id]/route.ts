@@ -84,3 +84,43 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const firmId = params.id;
+    const body = await request.json();
+    const { name, marketType, description, website, headquarters, foundedYear } = body;
+
+    const [updatedFirm] = await db
+      .update(firms)
+      .set({
+        name,
+        marketType,
+        description: description || null,
+        website: website || null,
+        headquarters: headquarters || null,
+        foundedYear: foundedYear ? parseInt(foundedYear) : null,
+        updatedAt: new Date(),
+      })
+      .where(eq(firms.id, firmId))
+      .returning();
+
+    if (!updatedFirm) {
+      return NextResponse.json(
+        { error: 'Firm not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedFirm);
+  } catch (error) {
+    console.error('Error updating firm:', error);
+    return NextResponse.json(
+      { error: 'Failed to update firm' },
+      { status: 500 }
+    );
+  }
+}

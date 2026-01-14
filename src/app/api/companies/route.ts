@@ -22,3 +22,37 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { name, description, website, industry, headquarters, foundedYear } = body;
+
+    if (!name) {
+      return NextResponse.json(
+        { error: 'Name is required' },
+        { status: 400 }
+      );
+    }
+
+    const [newCompany] = await db
+      .insert(companies)
+      .values({
+        name,
+        description: description || null,
+        website: website || null,
+        industry: industry || null,
+        headquarters: headquarters || null,
+        foundedYear: foundedYear ? parseInt(foundedYear) : null,
+      })
+      .returning();
+
+    return NextResponse.json(newCompany, { status: 201 });
+  } catch (error) {
+    console.error('Error creating company:', error);
+    return NextResponse.json(
+      { error: 'Failed to create company' },
+      { status: 500 }
+    );
+  }
+}

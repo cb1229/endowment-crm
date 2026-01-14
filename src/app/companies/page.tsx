@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Building, ExternalLink } from 'lucide-react';
+import { Building, ExternalLink, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { CompanySheet } from '@/components/company-sheet';
 import Link from 'next/link';
 
 interface Company {
@@ -26,23 +28,24 @@ interface Company {
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const fetchCompanies = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/companies');
+      if (response.ok) {
+        const data = await response.json();
+        setCompanies(data);
+      }
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchCompanies() {
-      setIsLoading(true);
-      try {
-        const response = await fetch('/api/companies');
-        if (response.ok) {
-          const data = await response.json();
-          setCompanies(data);
-        }
-      } catch (error) {
-        console.error('Error fetching companies:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchCompanies();
   }, []);
 
@@ -80,14 +83,20 @@ export default function CompaniesPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Building className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-medium tracking-tight">Portfolio Companies</h1>
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Building className="h-6 w-6 text-primary" />
+              <h1 className="text-2xl font-medium tracking-tight">Portfolio Companies</h1>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Monitor portfolio companies and investment prospects
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Monitor portfolio companies and investment prospects
-          </p>
+          <Button onClick={() => setSheetOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Company
+          </Button>
         </div>
 
         {/* Table */}
@@ -154,6 +163,12 @@ export default function CompaniesPage() {
           </div>
         )}
       </main>
+
+      <CompanySheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        onSuccess={fetchCompanies}
+      />
     </div>
   );
 }

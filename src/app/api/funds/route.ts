@@ -38,3 +38,38 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { name, firmId, marketType, description, vintageYear, fundSize, strategy } = body;
+
+    if (!name || !marketType) {
+      return NextResponse.json(
+        { error: 'Name and market type are required' },
+        { status: 400 }
+      );
+    }
+
+    const [newFund] = await db
+      .insert(funds)
+      .values({
+        name,
+        firmId: firmId || null,
+        marketType,
+        description: description || null,
+        vintageYear: vintageYear ? parseInt(vintageYear) : null,
+        fundSize: fundSize || null,
+        strategy: strategy || null,
+      })
+      .returning();
+
+    return NextResponse.json(newFund, { status: 201 });
+  } catch (error) {
+    console.error('Error creating fund:', error);
+    return NextResponse.json(
+      { error: 'Failed to create fund' },
+      { status: 500 }
+    );
+  }
+}

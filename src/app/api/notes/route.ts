@@ -80,3 +80,48 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { title, content, authorName, authorId, isPublic, entityTags } = body;
+
+    if (!title || !content || !authorName) {
+      return NextResponse.json(
+        { error: 'Title, content, and author name are required' },
+        { status: 400 }
+      );
+    }
+
+    // Create the note
+    const [newNote] = await db
+      .insert(notes)
+      .values({
+        title,
+        content,
+        authorName,
+        authorId: authorId || 'default-user',
+        isPublic: isPublic ?? true,
+      })
+      .returning();
+
+    // Create entity tags if provided
+    if (entityTags && Array.isArray(entityTags) && entityTags.length > 0) {
+      const tagValues = entityTags.map((tag: { entityType: 'firm' | 'fund' | 'company'; entityId: string }) => ({
+        noteId: newNote.id,
+        entityType: tag.entityType as 'firm' | 'fund' | 'company',
+        entityId: tag.entityId,
+      }));
+
+      await db.insert(noteEntityTags).values(tagValues);
+    }
+
+    return NextResponse.json(newNote, { status: 201 });
+  } catch (error) {
+    console.error('Error creating note:', error);
+    return NextResponse.json(
+      { error: 'Failed to create note' },
+      { status: 500 }
+    );
+  }
+}

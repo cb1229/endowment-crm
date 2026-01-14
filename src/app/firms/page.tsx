@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Building2, ExternalLink } from 'lucide-react';
+import { Building2, ExternalLink, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { FirmSheet } from '@/components/firm-sheet';
 import Link from 'next/link';
 
 interface Firm {
@@ -26,23 +28,24 @@ interface Firm {
 export default function FirmsPage() {
   const [firms, setFirms] = useState<Firm[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const fetchFirms = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/firms');
+      if (response.ok) {
+        const data = await response.json();
+        setFirms(data);
+      }
+    } catch (error) {
+      console.error('Error fetching firms:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchFirms() {
-      setIsLoading(true);
-      try {
-        const response = await fetch('/api/firms');
-        if (response.ok) {
-          const data = await response.json();
-          setFirms(data);
-        }
-      } catch (error) {
-        console.error('Error fetching firms:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchFirms();
   }, []);
 
@@ -80,14 +83,20 @@ export default function FirmsPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Building2 className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-medium tracking-tight">Investment Firms</h1>
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Building2 className="h-6 w-6 text-primary" />
+              <h1 className="text-2xl font-medium tracking-tight">Investment Firms</h1>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Manage relationships with investment management firms
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Manage relationships with investment management firms
-          </p>
+          <Button onClick={() => setSheetOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Firm
+          </Button>
         </div>
 
         {/* Table */}
@@ -152,6 +161,12 @@ export default function FirmsPage() {
           </div>
         )}
       </main>
+
+      <FirmSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        onSuccess={fetchFirms}
+      />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { NoteCard } from '@/components/note-card';
+import { NoteSheet } from '@/components/note-sheet';
 import { Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 
@@ -21,23 +22,24 @@ export default function HomePage() {
   const [marketFilter, setMarketFilter] = useState<MarketFilter>('all');
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+
+  const fetchNotes = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/notes?market=${marketFilter}&limit=20`);
+      if (response.ok) {
+        const data = await response.json();
+        setNotes(data);
+      }
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchNotes() {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/notes?market=${marketFilter}&limit=20`);
-        if (response.ok) {
-          const data = await response.json();
-          setNotes(data);
-        }
-      } catch (error) {
-        console.error('Error fetching notes:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchNotes();
   }, [marketFilter]);
 
@@ -73,7 +75,7 @@ export default function HomePage() {
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
-              <Button size="sm">
+              <Button size="sm" onClick={() => setNoteSheetOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 New Note
               </Button>
@@ -109,7 +111,7 @@ export default function HomePage() {
           ) : notes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
               <p className="text-sm text-muted-foreground mb-4">No notes found</p>
-              <Button size="sm">
+              <Button size="sm" onClick={() => setNoteSheetOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Create your first note
               </Button>
@@ -121,6 +123,12 @@ export default function HomePage() {
           )}
         </div>
       </main>
+
+      <NoteSheet
+        open={noteSheetOpen}
+        onOpenChange={setNoteSheetOpen}
+        onSuccess={fetchNotes}
+      />
     </div>
   );
 }

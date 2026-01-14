@@ -93,3 +93,44 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const fundId = params.id;
+    const body = await request.json();
+    const { name, firmId, marketType, description, vintageYear, fundSize, strategy } = body;
+
+    const [updatedFund] = await db
+      .update(funds)
+      .set({
+        name,
+        firmId: firmId || null,
+        marketType,
+        description: description || null,
+        vintageYear: vintageYear ? parseInt(vintageYear) : null,
+        fundSize: fundSize || null,
+        strategy: strategy || null,
+        updatedAt: new Date(),
+      })
+      .where(eq(funds.id, fundId))
+      .returning();
+
+    if (!updatedFund) {
+      return NextResponse.json(
+        { error: 'Fund not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedFund);
+  } catch (error) {
+    console.error('Error updating fund:', error);
+    return NextResponse.json(
+      { error: 'Failed to update fund' },
+      { status: 500 }
+    );
+  }
+}

@@ -76,3 +76,43 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const companyId = params.id;
+    const body = await request.json();
+    const { name, description, website, industry, headquarters, foundedYear } = body;
+
+    const [updatedCompany] = await db
+      .update(companies)
+      .set({
+        name,
+        description: description || null,
+        website: website || null,
+        industry: industry || null,
+        headquarters: headquarters || null,
+        foundedYear: foundedYear ? parseInt(foundedYear) : null,
+        updatedAt: new Date(),
+      })
+      .where(eq(companies.id, companyId))
+      .returning();
+
+    if (!updatedCompany) {
+      return NextResponse.json(
+        { error: 'Company not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedCompany);
+  } catch (error) {
+    console.error('Error updating company:', error);
+    return NextResponse.json(
+      { error: 'Failed to update company' },
+      { status: 500 }
+    );
+  }
+}
