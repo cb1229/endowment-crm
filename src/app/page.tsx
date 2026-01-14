@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { NoteCard } from '@/components/note-card';
 import { NoteSheet } from '@/components/note-sheet';
+import { NoteDetailSheet } from '@/components/note-detail-sheet';
 import { StatsCard } from '@/components/stats-card';
 import { PageHeader } from '@/components/page-header';
 import { Plus, Building2, TrendingUp, Building, Briefcase } from 'lucide-react';
@@ -32,6 +33,8 @@ export default function HomePage() {
   const [stats, setStats] = useState<Stats>({ firmCount: 0, fundCount: 0, companyCount: 0, dealCount: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const [noteDetailOpen, setNoteDetailOpen] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [commandOpen, setCommandOpen] = useState(false);
 
   const fetchData = async () => {
@@ -147,7 +150,14 @@ export default function HomePage() {
               </div>
             ) : (
               notes.map((note) => (
-                <NoteCard key={note.id} note={note} />
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  onClick={() => {
+                    setSelectedNoteId(note.id);
+                    setNoteDetailOpen(true);
+                  }}
+                />
               ))
             )}
           </div>
@@ -157,6 +167,13 @@ export default function HomePage() {
       <NoteSheet
         open={noteSheetOpen}
         onOpenChange={setNoteSheetOpen}
+        onSuccess={fetchData}
+      />
+
+      <NoteDetailSheet
+        noteId={selectedNoteId}
+        open={noteDetailOpen}
+        onOpenChange={setNoteDetailOpen}
         onSuccess={fetchData}
       />
     </div>

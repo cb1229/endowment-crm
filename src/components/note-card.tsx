@@ -18,15 +18,16 @@ interface NoteCardProps {
     funds?: Array<{ id: string; name: string; marketType: string }>;
     companies?: Array<{ id: string; name: string }>;
   };
+  onClick?: () => void;
 }
 
-export function NoteCard({ note, entities }: NoteCardProps) {
+export function NoteCard({ note, entities, onClick }: NoteCardProps) {
   const createdAt = typeof note.createdAt === 'string'
     ? new Date(note.createdAt)
     : note.createdAt;
 
   return (
-    <Card className="card-hover cursor-pointer">
+    <Card className="card-hover cursor-pointer" onClick={onClick}>
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex-1">
