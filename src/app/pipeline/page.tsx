@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DealSheet } from '@/components/deal-sheet';
+import { FilterTabs } from '@/components/filter-tabs';
 import Link from 'next/link';
 import {
   DndContext,
@@ -90,11 +91,14 @@ function DealCard({ deal }: { deal: Deal }) {
   );
 }
 
+type PriorityFilter = 'all' | 'high' | 'medium' | 'low';
+
 export default function PipelinePage() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
   const [dealSheetOpen, setDealSheetOpen] = useState(false);
+  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all');
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -120,10 +124,22 @@ export default function PipelinePage() {
     fetchDeals();
   }, []);
 
+  const filteredDeals = deals.filter((deal) => {
+    if (priorityFilter === 'all') return true;
+    return deal.priority === priorityFilter;
+  });
+
   const dealsByStage = STAGES.reduce((acc, stage) => {
-    acc[stage.id] = deals.filter((deal) => deal.stage === stage.id);
+    acc[stage.id] = filteredDeals.filter((deal) => deal.stage === stage.id);
     return acc;
   }, {} as Record<string, Deal[]>);
+
+  const priorityCounts = {
+    all: deals.length,
+    high: deals.filter(d => d.priority === 'high').length,
+    medium: deals.filter(d => d.priority === 'medium').length,
+    low: deals.filter(d => d.priority === 'low').length,
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     const deal = deals.find((d) => d.id === event.active.id);
@@ -212,6 +228,20 @@ export default function PipelinePage() {
             <Plus className="h-4 w-4 mr-2" />
             Add Deal
           </Button>
+        </div>
+
+        {/* Priority Filter */}
+        <div className="mb-4">
+          <FilterTabs
+            value={priorityFilter}
+            onValueChange={(v) => setPriorityFilter(v as PriorityFilter)}
+            options={[
+              { value: 'all', label: 'All Priorities', count: priorityCounts.all },
+              { value: 'high', label: 'High', count: priorityCounts.high },
+              { value: 'medium', label: 'Medium', count: priorityCounts.medium },
+              { value: 'low', label: 'Low', count: priorityCounts.low },
+            ]}
+          />
         </div>
 
         {/* Kanban Board */}

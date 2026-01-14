@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/table';
 import { FirmSheet } from '@/components/firm-sheet';
 import { SearchInput } from '@/components/search-input';
+import { FilterTabs } from '@/components/filter-tabs';
 import Link from 'next/link';
 
 interface Firm {
@@ -26,11 +27,14 @@ interface Firm {
   foundedYear: number | null;
 }
 
+type MarketFilter = 'all' | 'public_markets' | 'private_markets';
+
 export default function FirmsPage() {
   const [firms, setFirms] = useState<Firm[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [marketFilter, setMarketFilter] = useState<MarketFilter>('all');
 
   const fetchFirms = async () => {
     setIsLoading(true);
@@ -53,12 +57,21 @@ export default function FirmsPage() {
 
   const filteredFirms = firms.filter((firm) => {
     const query = searchQuery.toLowerCase();
-    return (
+    const matchesSearch =
       firm.name.toLowerCase().includes(query) ||
       firm.headquarters?.toLowerCase().includes(query) ||
-      firm.description?.toLowerCase().includes(query)
-    );
+      firm.description?.toLowerCase().includes(query);
+
+    const matchesMarket = marketFilter === 'all' || firm.marketType === marketFilter;
+
+    return matchesSearch && matchesMarket;
   });
+
+  const marketCounts = {
+    all: firms.length,
+    public_markets: firms.filter(f => f.marketType === 'public_markets').length,
+    private_markets: firms.filter(f => f.marketType === 'private_markets').length,
+  };
 
   return (
     <div className="min-h-screen bg-background bg-dot-pattern">
@@ -110,13 +123,24 @@ export default function FirmsPage() {
           </Button>
         </div>
 
-        {/* Search */}
-        <div className="mb-4 max-w-md">
-          <SearchInput
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder="Search firms by name, location..."
+        {/* Filters */}
+        <div className="mb-4 flex items-center gap-4">
+          <FilterTabs
+            value={marketFilter}
+            onValueChange={(v) => setMarketFilter(v as MarketFilter)}
+            options={[
+              { value: 'all', label: 'All Markets', count: marketCounts.all },
+              { value: 'public_markets', label: 'Public', count: marketCounts.public_markets },
+              { value: 'private_markets', label: 'Private', count: marketCounts.private_markets },
+            ]}
           />
+          <div className="flex-1 max-w-md">
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search firms by name, location..."
+            />
+          </div>
         </div>
 
         {/* Table */}
