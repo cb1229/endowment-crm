@@ -26,40 +26,40 @@ export function NoteCard({ note, entities }: NoteCardProps) {
     : note.createdAt;
 
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer">
-      <CardHeader className="pb-3">
+    <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+      <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg font-semibold mb-1">
+            <CardTitle className="mb-1">
               {note.title}
             </CardTitle>
-            <CardDescription className="text-xs">
+            <CardDescription className="text-xs font-normal text-muted-foreground">
               {note.authorName} · {formatDistanceToNow(createdAt)}
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
           {note.content}
         </p>
 
         {entities && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-1.5">
             {entities.firms?.map((firm) => (
-              <Badge key={firm.id} variant="outline" className="text-xs">
+              <Badge key={firm.id} variant="outline" className="text-xs rounded-full badge-blue">
                 <Building2 className="w-3 h-3 mr-1" />
                 {firm.name}
               </Badge>
             ))}
             {entities.funds?.map((fund) => (
-              <Badge key={fund.id} variant="outline" className="text-xs">
+              <Badge key={fund.id} variant="outline" className="text-xs rounded-full badge-purple">
                 <TrendingUp className="w-3 h-3 mr-1" />
                 {fund.name}
               </Badge>
             ))}
             {entities.companies?.map((company) => (
-              <Badge key={company.id} variant="outline" className="text-xs">
+              <Badge key={company.id} variant="outline" className="text-xs rounded-full badge-green">
                 <Building className="w-3 h-3 mr-1" />
                 {company.name}
               </Badge>
