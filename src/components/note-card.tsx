@@ -1,0 +1,72 @@
+'use client';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Building2, TrendingUp, Building } from 'lucide-react';
+import { formatDistanceToNow } from '@/lib/date-utils';
+
+interface NoteCardProps {
+  note: {
+    id: string;
+    title: string;
+    content: string;
+    authorName: string;
+    createdAt: Date | string;
+  };
+  entities?: {
+    firms?: Array<{ id: string; name: string; marketType: string }>;
+    funds?: Array<{ id: string; name: string; marketType: string }>;
+    companies?: Array<{ id: string; name: string }>;
+  };
+}
+
+export function NoteCard({ note, entities }: NoteCardProps) {
+  const createdAt = typeof note.createdAt === 'string'
+    ? new Date(note.createdAt)
+    : note.createdAt;
+
+  return (
+    <Card className="hover:shadow-md transition-shadow cursor-pointer">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <CardTitle className="text-lg font-semibold mb-1">
+              {note.title}
+            </CardTitle>
+            <CardDescription className="text-xs">
+              {note.authorName} · {formatDistanceToNow(createdAt)}
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+          {note.content}
+        </p>
+
+        {entities && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {entities.firms?.map((firm) => (
+              <Badge key={firm.id} variant="outline" className="text-xs">
+                <Building2 className="w-3 h-3 mr-1" />
+                {firm.name}
+              </Badge>
+            ))}
+            {entities.funds?.map((fund) => (
+              <Badge key={fund.id} variant="outline" className="text-xs">
+                <TrendingUp className="w-3 h-3 mr-1" />
+                {fund.name}
+              </Badge>
+            ))}
+            {entities.companies?.map((company) => (
+              <Badge key={company.id} variant="outline" className="text-xs">
+                <Building className="w-3 h-3 mr-1" />
+                {company.name}
+              </Badge>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
