@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { FirmSheet } from '@/components/firm-sheet';
+import { SearchInput } from '@/components/search-input';
 import Link from 'next/link';
 
 interface Firm {
@@ -29,6 +30,7 @@ export default function FirmsPage() {
   const [firms, setFirms] = useState<Firm[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchFirms = async () => {
     setIsLoading(true);
@@ -48,6 +50,15 @@ export default function FirmsPage() {
   useEffect(() => {
     fetchFirms();
   }, []);
+
+  const filteredFirms = firms.filter((firm) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      firm.name.toLowerCase().includes(query) ||
+      firm.headquarters?.toLowerCase().includes(query) ||
+      firm.description?.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-background bg-dot-pattern">
@@ -99,14 +110,25 @@ export default function FirmsPage() {
           </Button>
         </div>
 
+        {/* Search */}
+        <div className="mb-4 max-w-md">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search firms by name, location..."
+          />
+        </div>
+
         {/* Table */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-sm text-muted-foreground">Loading firms...</div>
           </div>
-        ) : firms.length === 0 ? (
+        ) : filteredFirms.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
-            <p className="text-sm text-muted-foreground">No firms found</p>
+            <p className="text-sm text-muted-foreground">
+              {searchQuery ? 'No firms match your search' : 'No firms found'}
+            </p>
           </div>
         ) : (
           <div className="rounded-lg border bg-card">
@@ -121,7 +143,7 @@ export default function FirmsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {firms.map((firm) => (
+                {filteredFirms.map((firm) => (
                   <TableRow key={firm.id} className="cursor-pointer hover:bg-muted/50">
                     <TableCell>
                       <Link href={`/firms/${firm.id}`} className="flex items-center gap-2 font-medium">

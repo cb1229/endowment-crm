@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { CompanySheet } from '@/components/company-sheet';
+import { SearchInput } from '@/components/search-input';
 import Link from 'next/link';
 
 interface Company {
@@ -29,6 +30,7 @@ export default function CompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchCompanies = async () => {
     setIsLoading(true);
@@ -48,6 +50,15 @@ export default function CompaniesPage() {
   useEffect(() => {
     fetchCompanies();
   }, []);
+
+  const filteredCompanies = companies.filter((company) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      company.name.toLowerCase().includes(query) ||
+      company.industry?.toLowerCase().includes(query) ||
+      company.headquarters?.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-background bg-dot-pattern">
@@ -98,13 +109,21 @@ export default function CompaniesPage() {
             Add Company
           </Button>
         </div>
+        {/* Search */}
+        <div className="mb-4 max-w-md">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search companies by name, industry..."
+          />
+        </div>
 
         {/* Table */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-sm text-muted-foreground">Loading companies...</div>
           </div>
-        ) : companies.length === 0 ? (
+        ) : filteredCompanies.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
             <p className="text-sm text-muted-foreground">No companies found</p>
           </div>
@@ -121,7 +140,7 @@ export default function CompaniesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {companies.map((company) => (
+                {filteredCompanies.map((company) => (
                   <TableRow key={company.id} className="cursor-pointer hover:bg-muted/50">
                     <TableCell>
                       <Link href={`/companies/${company.id}`} className="font-medium">
