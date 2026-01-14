@@ -5,10 +5,10 @@ import { eq, and } from 'drizzle-orm';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const noteId = params.id;
+    const { id: noteId } = await params;
 
     // Get all entity tags for this note
     const tags = await db
