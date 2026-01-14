@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
+import { AppShell } from "@/components/app-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,9 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.variable}>
       <body className="font-sans antialiased">
-        <div className="min-h-screen bg-background">
-          {children}
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

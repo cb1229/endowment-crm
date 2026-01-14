@@ -74,6 +74,11 @@
     background-size: 32px 32px;
   }
 
+  /* Paper layout - content containers on gray background */
+  .paper-container {
+    @apply bg-white rounded-lg border border-gray-200 shadow-sm;
+  }
+
   /* Glass effect cards */
   .card-glass {
     @apply backdrop-blur-sm bg-white/90 border border-gray-200;
@@ -95,6 +100,23 @@
 
   .card-compact {
     @apply py-3 px-4;
+  }
+
+  /* Status pills with solid backgrounds */
+  .status-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .status-high {
+    @apply bg-red-500 text-white;
+  }
+
+  .status-medium {
+    @apply bg-yellow-500 text-white;
+  }
+
+  .status-low {
+    @apply bg-green-500 text-white;
   }
 
   /* Pastel badge variants */
@@ -138,5 +160,18 @@
 
   .table-dense td {
     @apply py-2 px-3;
+  }
+
+  /* Avatar utilities */
+  .avatar {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-700;
+  }
+
+  .avatar-sm {
+    @apply h-6 w-6 text-xs;
+  }
+
+  .avatar-lg {
+    @apply h-10 w-10 text-sm;
   }
 }
