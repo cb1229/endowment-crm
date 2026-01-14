@@ -47,13 +47,13 @@ export default function FirmsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-dot-pattern">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <Link href="/" className="text-xl font-medium">
+              <Link href="/" className="text-xl font-medium tracking-tight">
                 Endowment CRM
               </Link>
               <nav className="flex items-center gap-6 text-sm">
@@ -82,8 +82,8 @@ export default function FirmsPage() {
       <main className="container mx-auto px-6 py-8">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <Building2 className="h-6 w-6" />
-            <h1 className="text-2xl font-medium">Investment Firms</h1>
+            <Building2 className="h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-medium tracking-tight">Investment Firms</h1>
           </div>
           <p className="text-sm text-muted-foreground">
             Manage relationships with investment management firms

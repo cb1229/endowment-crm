@@ -42,13 +42,13 @@ export default function HomePage() {
   }, [marketFilter]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-dot-pattern">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <Link href="/" className="text-xl font-medium">
+              <Link href="/" className="text-xl font-medium tracking-tight">
                 Endowment CRM
               </Link>
               <nav className="flex items-center gap-6 text-sm">
@@ -85,7 +85,7 @@ export default function HomePage() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         <div className="mb-6">
-          <h2 className="text-2xl font-medium mb-1">Recent Intelligence</h2>
+          <h2 className="text-2xl font-medium mb-1 tracking-tight">Recent Intelligence</h2>
           <p className="text-sm text-muted-foreground">
             Latest notes, meetings, and research across your portfolio
           </p>

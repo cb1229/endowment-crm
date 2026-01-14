@@ -26,11 +26,11 @@ export function NoteCard({ note, entities }: NoteCardProps) {
     : note.createdAt;
 
   return (
-    <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+    <Card className="card-hover cursor-pointer">
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="mb-1">
+            <CardTitle className="mb-1 tracking-tight">
               {note.title}
             </CardTitle>
             <CardDescription className="text-xs font-normal text-muted-foreground">
