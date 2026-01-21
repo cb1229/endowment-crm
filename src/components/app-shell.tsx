@@ -54,8 +54,8 @@ export function AppShell({ children }: AppShellProps) {
   // Show loading state while checking auth
   if (isAuthenticated === null) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-sm text-muted-foreground">Loading...</div>
+      <div className="flex h-screen items-center justify-center bg-hhmi-cultured">
+        <div className="text-sm text-hhmi-granite">Loading...</div>
       </div>
     );
   }
@@ -65,9 +65,9 @@ export function AppShell({ children }: AppShellProps) {
     return <>{children}</>;
   }
 
-  // Authenticated routes show full app shell
+  // Authenticated routes show full app shell with HHMI theme
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-hhmi-cultured">
       <AppSidebar />
       <main className="ml-64 flex-1 overflow-y-auto">
         {children}
