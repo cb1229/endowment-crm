@@ -101,7 +101,8 @@ async function seed() {
       title: 'Q4 Portfolio Review with Sequoia',
       content: 'Met with the Sequoia team to review Q4 performance. Fund XVI is performing above expectations with strong returns from the AI/ML portfolio companies. Discussed potential co-investment opportunities in the next funding round for Stripe. Key takeaway: increasing allocation to infrastructure plays.',
       userId: 'e17b451a-4302-49c7-9c3a-98874360223e',
-      authorName: 'Sarah Chen',
+      authorId: 'e17b451a-4302-49c7-9c3a-98874360223e',
+      originalAuthorName: 'Sarah Chen',
       isPublic: true,
     }).returning();
 
@@ -109,7 +110,8 @@ async function seed() {
       title: 'OpenAI Investment Thesis',
       content: 'Detailed analysis of OpenAI\'s market position and growth trajectory. With GPT-4 adoption accelerating across enterprise, revenue projections look strong. Concerned about regulatory headwinds in EU. Recommendation: Increase position if valuation dips below $80B.',
       userId: 'e17b451a-4302-49c7-9c3a-98874360223e',
-      authorName: 'Michael Rodriguez',
+      authorId: 'e17b451a-4302-49c7-9c3a-98874360223e',
+      originalAuthorName: 'Michael Rodriguez',
       isPublic: true,
     }).returning();
 
@@ -117,7 +119,8 @@ async function seed() {
       title: 'BlackRock Public Markets Update',
       content: 'Quarterly call with BlackRock Global Allocation team. Shifting toward defensive positioning amid interest rate uncertainty. Reducing tech exposure by 5% and increasing utilities and consumer staples. Fund returned 8.2% YTD vs benchmark 6.5%.',
       userId: 'e17b451a-4302-49c7-9c3a-98874360223e',
-      authorName: 'Sarah Chen',
+      authorId: 'e17b451a-4302-49c7-9c3a-98874360223e',
+      originalAuthorName: 'Sarah Chen',
       isPublic: true,
     }).returning();
 
@@ -125,7 +128,8 @@ async function seed() {
       title: 'a16z Crypto Strategy Discussion',
       content: 'Deep dive on a16z\'s crypto thesis for 2024. Focus shifting from DeFi to real-world asset tokenization and enterprise blockchain. Coinbase remains a core holding. Discussed potential LP commitment to Fund IV launching Q2.',
       userId: 'e17b451a-4302-49c7-9c3a-98874360223e',
-      authorName: 'James Wilson',
+      authorId: 'e17b451a-4302-49c7-9c3a-98874360223e',
+      originalAuthorName: 'James Wilson',
       isPublic: true,
     }).returning();
 
