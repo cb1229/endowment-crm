@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import Link from 'next/link';
+
+// Helper function to get initials from a name or email
+function getInitials(name: string): string {
+  if (!name) return '?';
+  if (name.includes('@')) {
+    return name.charAt(0).toUpperCase();
+  }
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) {
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
 
 interface NoteEntity {
   id: string;
@@ -34,7 +48,9 @@ interface Note {
   id: string;
   title: string;
   content: string;
+  authorId?: string | null;
   authorName: string;
+  originalAuthorName?: string;
   createdAt: string;
   entities?: NoteEntity[];
 }
@@ -224,8 +240,8 @@ export function NoteDetailSheet({ noteId, open, onOpenChange, onSuccess }: NoteD
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex-1 pr-8">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
               {isEditing ? (
                 <Input
                   value={editedTitle}
@@ -234,34 +250,50 @@ export function NoteDetailSheet({ noteId, open, onOpenChange, onSuccess }: NoteD
                   placeholder="Note title"
                 />
               ) : (
-                <SheetTitle className="text-xl">{note.title}</SheetTitle>
+                <SheetTitle className="text-xl mb-3">{note.title}</SheetTitle>
               )}
-              <p className="text-sm text-muted-foreground mt-2">
-                {note.authorName} • {new Date(note.createdAt).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </p>
-            </div>
-            {!isEditing ? (
-              <Button variant="outline" size="sm" onClick={handleEdit}>
-                <Pencil className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleCancelEdit}>
-                  Cancel
-                </Button>
-                <Button size="sm" onClick={handleSave} disabled={isSaving}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
+              {/* Author Info with Avatar */}
+              <div className="flex items-center gap-2 mt-2">
+                <Avatar className="h-7 w-7">
+                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                    {getInitials(note.authorName)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    {note.authorName}
+                  </span>
+                  <span>•</span>
+                  <span>
+                    {new Date(note.createdAt).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </div>
               </div>
-            )}
+            </div>
+            <div className="flex-shrink-0">
+              {!isEditing ? (
+                <Button variant="outline" size="sm" onClick={handleEdit}>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                    Cancel
+                  </Button>
+                  <Button size="sm" onClick={handleSave} disabled={isSaving}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </SheetHeader>
 
