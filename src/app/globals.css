@@ -4,64 +4,44 @@
 
 @layer base {
   :root {
-    /* HHMI Scientific Discovery Theme */
-    --background: 46 14% 96%; /* #F5F5F0 - Cultured off-white */
-    --foreground: 0 0% 20%; /* #333333 - Dark gray for body text */
-    --card: 0 0% 100%; /* Pure white */
-    --card-foreground: 0 0% 20%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%;
+    /* Wrangle.ai Dark Mode First Theme */
+    /* Force dark mode - no light mode support */
+    --background: 240 10% 3.9%; /* #09090B - Zinc-950 "The Void" */
+    --foreground: 0 0% 100%; /* #FFFFFF - Pure white for headings */
     
-    /* Primary: Deep Blue (#003A63) */
-    --primary: 203 100% 19%;
+    --card: 240 6% 7%; /* #121214 - Zinc-925 */
+    --card-foreground: 0 0% 100%;
+    
+    --popover: 240 6% 7%;
+    --popover-foreground: 0 0% 100%;
+    
+    /* Primary: Indigo-500 (#6366F1) */
+    --primary: 239 84% 67%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary: Teal-to-Green gradient base */
-    --secondary: 184 95% 30%; /* #058D96 - Teal */
+    /* Secondary: Subtle white overlay */
+    --secondary: 0 0% 100% / 0.05;
     --secondary-foreground: 0 0% 100%;
     
-    /* Muted: Granite Gray */
-    --muted: 240 2% 38%; /* #5F6062 */
-    --muted-foreground: 240 2% 50%;
+    /* Muted: Zinc-400 (#A1A1AA) for body text */
+    --muted: 240 5% 26%; /* Zinc-700 for backgrounds */
+    --muted-foreground: 240 5% 65%; /* Zinc-400 for text */
     
-    /* Accent: Teal */
-    --accent: 184 95% 30%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent: Indigo-300 (#A5B4FC) */
+    --accent: 239 84% 82%;
+    --accent-foreground: 240 10% 3.9%;
     
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 0 0% 90%; /* Light gray */
-    --input: 0 0% 90%;
-    --ring: 184 95% 30%; /* Teal ring */
-    --radius: 0.375rem; /* Slightly less rounded for scientific look */
+    /* Borders: Zinc-800 (#27272A) */
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
     
-    /* Sidebar: Deep Blue */
-    --sidebar: 203 100% 19%;
-    --sidebar-foreground: 0 0% 100%;
-  }
-
-  .dark {
-    /* Dark mode keeps same values for consistency */
-    --background: 203 100% 10%;
-    --foreground: 0 0% 98%;
-    --card: 203 100% 15%;
-    --card-foreground: 0 0% 98%;
-    --popover: 203 100% 15%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 184 95% 40%;
-    --primary-foreground: 203 100% 10%;
-    --secondary: 203 100% 25%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 203 50% 20%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 184 95% 40%;
-    --accent-foreground: 203 100% 10%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 203 50% 25%;
-    --input: 203 50% 25%;
-    --ring: 184 95% 40%;
+    /* Ring: Indigo-500 */
+    --ring: 239 84% 67%;
+    
+    --radius: 0.5rem;
   }
 }
 
@@ -69,65 +49,71 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground leading-relaxed;
+    @apply bg-background text-muted-foreground text-[13px] antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold text-hhmi-blue;
+    @apply font-semibold tracking-tight text-foreground;
   }
 }
 
 @layer utilities {
-  /* HHMI Gradient Accent */
-  .hhmi-gradient {
-    @apply bg-gradient-to-r from-hhmi-teal to-hhmi-green;
+  /* Wrangle.ai Glass/Glow Card */
+  .glass-card {
+    @apply bg-zinc-900/50 backdrop-blur-sm border border-white/10;
   }
   
-  .hhmi-gradient-text {
-    @apply bg-gradient-to-r from-hhmi-teal to-hhmi-green bg-clip-text text-transparent;
+  .glass-card-hover {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .glass-card-hover:hover {
+    @apply border-indigo-500/50;
   }
 
-  /* Scientific Paper Card */
-  .paper-container {
-    @apply bg-white rounded-lg border border-gray-200 shadow-none;
-  }
-
-  /* Refined card hover - subtle, scientific */
+  /* Card hover - subtle glow */
   .card-hover {
     @apply transition-all duration-200 ease-in-out;
   }
 
   .card-hover:hover {
-    @apply border-hhmi-teal/40 shadow-sm;
+    @apply border-indigo-500/30;
   }
 
-  /* HHMI Badge variants */
+  /* Outlined Badge variants (Wrangle style) */
   .badge-blue {
-    @apply bg-hhmi-blue/10 text-hhmi-blue border-hhmi-blue/20;
+    @apply bg-transparent text-blue-400 border border-blue-500/30;
   }
 
   .badge-teal {
-    @apply bg-hhmi-teal/10 text-hhmi-teal border-hhmi-teal/20;
+    @apply bg-transparent text-teal-400 border border-teal-500/30;
   }
 
   .badge-green {
-    @apply bg-hhmi-green/10 text-hhmi-green border-hhmi-green/20;
+    @apply bg-transparent text-green-400 border border-green-500/30;
   }
 
   .badge-purple {
-    @apply bg-purple-100 text-purple-700 border-purple-200;
+    @apply bg-transparent text-purple-400 border border-purple-500/30;
+  }
+
+  .badge-indigo {
+    @apply bg-transparent text-indigo-400 border border-indigo-500/30;
   }
 
   .badge-gray {
-    @apply bg-gray-100 text-hhmi-granite border-gray-200;
+    @apply bg-transparent text-zinc-400 border border-zinc-500/30;
   }
 
   .badge-yellow {
-    @apply bg-yellow-100 text-yellow-700 border-yellow-200;
+    @apply bg-transparent text-yellow-400 border border-yellow-500/30;
   }
 
   .badge-red {
-    @apply bg-red-100 text-red-700 border-red-200;
+    @apply bg-transparent text-red-400 border border-red-500/30;
   }
 
   /* Status pills */
@@ -136,33 +122,33 @@
   }
 
   .status-high {
-    @apply bg-red-500 text-white;
+    @apply bg-red-500/10 text-red-400 border border-red-500/30;
   }
 
   .status-medium {
-    @apply bg-yellow-500 text-white;
+    @apply bg-yellow-500/10 text-yellow-400 border border-yellow-500/30;
   }
 
   .status-low {
-    @apply bg-hhmi-green text-white;
+    @apply bg-green-500/10 text-green-400 border border-green-500/30;
   }
 
   /* Data table styles */
   .table-dense {
-    @apply text-sm;
+    @apply text-[13px];
   }
 
   .table-dense th {
-    @apply py-2 px-3 font-semibold tracking-tight text-hhmi-blue;
+    @apply py-2 px-3 font-semibold tracking-tight text-foreground;
   }
 
   .table-dense td {
-    @apply py-2 px-3;
+    @apply py-2 px-3 text-muted-foreground;
   }
 
   /* Avatar utilities */
   .avatar {
-    @apply inline-flex h-8 w-8 items-center justify-center rounded-full bg-hhmi-teal/10 text-xs font-medium text-hhmi-teal;
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/10 text-xs font-medium text-indigo-400 border border-indigo-500/20;
   }
 
   .avatar-sm {

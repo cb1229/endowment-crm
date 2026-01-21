@@ -19,16 +19,10 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'Inter', 'Helvetica Neue', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // HHMI Brand Colors
-        'hhmi-blue': '#003A63',
-        'hhmi-teal': '#058D96',
-        'hhmi-green': '#00A450',
-        'hhmi-cultured': '#F5F5F0',
-        'hhmi-granite': '#5F6062',
-
+        // Wrangle.ai Dark Theme - Zinc & Indigo
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
