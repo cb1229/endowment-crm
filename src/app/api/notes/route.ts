@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
       authorId: notes.authorId,
       // Display name: live profile name OR historical snapshot
       authorName: sql<string>`COALESCE(${profiles.fullName}, ${notes.originalAuthorName})`.as('author_name'),
+      authorAvatarUrl: profiles.avatarUrl,
       originalAuthorName: notes.originalAuthorName,
       isPublic: notes.isPublic,
       createdAt: notes.createdAt,

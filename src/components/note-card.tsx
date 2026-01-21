@@ -13,6 +13,7 @@ interface NoteCardProps {
     content: string;
     authorId?: string | null;
     authorName: string;
+    authorAvatarUrl?: string | null;
     originalAuthorName?: string;
     createdAt: Date | string;
   };
@@ -57,6 +58,7 @@ export function NoteCard({ note, entities, onClick }: NoteCardProps) {
             {/* Author Info with Avatar */}
             <div className="flex items-center gap-2 mb-1">
               <Avatar className="h-6 w-6">
+                {note.authorAvatarUrl && <AvatarImage src={note.authorAvatarUrl} alt={note.authorName} />}
                 <AvatarFallback className="text-xs bg-primary/10 text-primary">
                   {getInitials(note.authorName)}
                 </AvatarFallback>

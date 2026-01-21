@@ -50,6 +50,7 @@ interface Note {
   content: string;
   authorId?: string | null;
   authorName: string;
+  authorAvatarUrl?: string | null;
   originalAuthorName?: string;
   createdAt: string;
   entities?: NoteEntity[];
@@ -255,6 +256,7 @@ export function NoteDetailSheet({ noteId, open, onOpenChange, onSuccess }: NoteD
               {/* Author Info with Avatar */}
               <div className="flex items-center gap-2 mt-2">
                 <Avatar className="h-7 w-7">
+                  {note.authorAvatarUrl && <AvatarImage src={note.authorAvatarUrl} alt={note.authorName} />}
                   <AvatarFallback className="text-xs bg-primary/10 text-primary">
                     {getInitials(note.authorName)}
                   </AvatarFallback>
