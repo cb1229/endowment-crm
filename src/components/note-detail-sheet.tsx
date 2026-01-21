@@ -239,7 +239,7 @@ export function NoteDetailSheet({ noteId, open, onOpenChange, onSuccess }: NoteD
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-2xl overflow-y-auto">
-        <SheetHeader>
+        <SheetHeader className="pr-8">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               {isEditing ? (
@@ -276,7 +276,7 @@ export function NoteDetailSheet({ noteId, open, onOpenChange, onSuccess }: NoteD
                 </div>
               </div>
             </div>
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 pt-1">
               {!isEditing ? (
                 <Button variant="outline" size="sm" onClick={handleEdit}>
                   <Pencil className="h-4 w-4 mr-2" />

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { notes } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { notes, profiles } from '@/db/schema';
+import { eq, sql } from 'drizzle-orm';
 
 export async function GET(
   request: NextRequest,
@@ -9,8 +9,21 @@ export async function GET(
 ) {
   try {
     const [note] = await db
-      .select()
+      .select({
+        id: notes.id,
+        title: notes.title,
+        content: notes.content,
+        userId: notes.userId,
+        authorId: notes.authorId,
+        // Display name: live profile name OR historical snapshot
+        authorName: sql<string>`COALESCE(${profiles.fullName}, ${notes.originalAuthorName})`.as('author_name'),
+        originalAuthorName: notes.originalAuthorName,
+        isPublic: notes.isPublic,
+        createdAt: notes.createdAt,
+        updatedAt: notes.updatedAt,
+      })
       .from(notes)
+      .leftJoin(profiles, eq(notes.authorId, profiles.id))
       .where(eq(notes.id, params.id));
 
     if (!note) {
