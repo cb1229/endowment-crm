@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { firms, funds, notes, noteEntityTags, deals } from '@/db/schema';
+import { firms, funds, notes, noteEntityTags, deals, profiles } from '@/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 // Mark this route as dynamic
@@ -33,19 +33,23 @@ export async function GET(
       .from(funds)
       .where(eq(funds.firmId, firmId));
 
-    // Get related notes
+    // Get related notes with live/historic author names
     const firmNotes = await db
       .selectDistinct({
         id: notes.id,
         title: notes.title,
         content: notes.content,
         userId: notes.userId,
-        authorName: notes.authorName,
+        authorId: notes.authorId,
+        // Display name: live profile name OR historical snapshot
+        authorName: sql<string>`COALESCE(${profiles.fullName}, ${notes.originalAuthorName})`.as('author_name'),
+        originalAuthorName: notes.originalAuthorName,
         isPublic: notes.isPublic,
         createdAt: notes.createdAt,
         updatedAt: notes.updatedAt,
       })
       .from(notes)
+      .leftJoin(profiles, eq(notes.authorId, profiles.id))
       .innerJoin(noteEntityTags, eq(notes.id, noteEntityTags.noteId))
       .where(
         and(

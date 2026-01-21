@@ -7,6 +7,16 @@ export const dealStageEnum = pgEnum('deal_stage', ['triage', 'diligence', 'ic_vo
 export const dealPriorityEnum = pgEnum('deal_priority', ['low', 'medium', 'high']);
 export const entityTypeEnum = pgEnum('entity_type', ['firm', 'fund', 'company']);
 
+// User Profiles (Source of truth for user data)
+export const profiles = pgTable('profiles', {
+  id: uuid('id').primaryKey(), // References auth.users(id)
+  fullName: text('full_name'),
+  email: text('email').notNull(),
+  avatarUrl: text('avatar_url'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Investment Firms (Management Companies)
 export const firms = pgTable('firms', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -52,8 +62,9 @@ export const notes = pgTable('notes', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('title').notNull(),
   content: text('content').notNull(),
-  userId: uuid('user_id').notNull(), // References auth.users.id
-  authorName: text('author_name').notNull(), // Denormalized for performance
+  userId: uuid('user_id').notNull(), // References auth.users.id (legacy - being phased out)
+  authorId: uuid('author_id').references(() => profiles.id, { onDelete: 'set null' }), // Live reference to profiles
+  originalAuthorName: text('original_author_name').notNull(), // Historical snapshot
   isPublic: boolean('is_public').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -87,6 +98,10 @@ export const deals = pgTable('deals', {
 });
 
 // Relations
+export const profilesRelations = relations(profiles, ({ many }) => ({
+  notes: many(notes),
+}));
+
 export const firmsRelations = relations(firms, ({ many }) => ({
   funds: many(funds),
   noteEntityTags: many(noteEntityTags),
@@ -104,7 +119,11 @@ export const companiesRelations = relations(companies, ({ many }) => ({
   noteEntityTags: many(noteEntityTags),
 }));
 
-export const notesRelations = relations(notes, ({ many }) => ({
+export const notesRelations = relations(notes, ({ one, many }) => ({
+  author: one(profiles, {
+    fields: [notes.authorId],
+    references: [profiles.id],
+  }),
   noteEntityTags: many(noteEntityTags),
 }));
 
@@ -116,6 +135,8 @@ export const noteEntityTagsRelations = relations(noteEntityTags, ({ one }) => ({
 }));
 
 // Type exports for use in the application
+export type Profile = typeof profiles.$inferSelect;
+export type NewProfile = typeof profiles.$inferInsert;
 export type Firm = typeof firms.$inferSelect;
 export type NewFirm = typeof firms.$inferInsert;
 export type Fund = typeof funds.$inferSelect;

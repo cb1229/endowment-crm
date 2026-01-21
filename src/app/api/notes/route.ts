@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { notes, noteEntityTags, firms, funds } from '@/db/schema';
+import { notes, noteEntityTags, firms, funds, profiles } from '@/db/schema';
 import { desc, eq, or, and, sql } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
 
@@ -13,36 +13,28 @@ export async function GET(request: NextRequest) {
     const marketFilter = searchParams.get('market') as 'all' | 'public_markets' | 'private_markets' | null;
     const limit = parseInt(searchParams.get('limit') || '20');
 
-    // Base query to get notes with their entity tags
-    let query = db
-      .select({
-        id: notes.id,
-        title: notes.title,
-        content: notes.content,
-        userId: notes.userId,
-        authorName: notes.authorName,
-        isPublic: notes.isPublic,
-        createdAt: notes.createdAt,
-        updatedAt: notes.updatedAt,
-      })
-      .from(notes)
-      .orderBy(desc(notes.createdAt))
-      .limit(limit);
+    // Helper function to compute display author name
+    // Rule: Use live profile name if exists, otherwise use historical snapshot
+    const selectWithAuthor = {
+      id: notes.id,
+      title: notes.title,
+      content: notes.content,
+      userId: notes.userId,
+      authorId: notes.authorId,
+      // Display name: live profile name OR historical snapshot
+      authorName: sql<string>`COALESCE(${profiles.fullName}, ${notes.originalAuthorName})`.as('author_name'),
+      originalAuthorName: notes.originalAuthorName,
+      isPublic: notes.isPublic,
+      createdAt: notes.createdAt,
+      updatedAt: notes.updatedAt,
+    };
 
     // If filtering by market type, we need to join through the tagging system
     if (marketFilter && marketFilter !== 'all') {
       const notesWithMarketType = await db
-        .selectDistinct({
-          id: notes.id,
-          title: notes.title,
-          content: notes.content,
-          userId: notes.userId,
-          authorName: notes.authorName,
-          isPublic: notes.isPublic,
-          createdAt: notes.createdAt,
-          updatedAt: notes.updatedAt,
-        })
+        .selectDistinct(selectWithAuthor)
         .from(notes)
+        .leftJoin(profiles, eq(notes.authorId, profiles.id))
         .innerJoin(noteEntityTags, eq(notes.id, noteEntityTags.noteId))
         .leftJoin(
           firms,
@@ -70,8 +62,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(notesWithMarketType);
     }
 
-    // If no filter or 'all', just return all notes
-    const allNotes = await query;
+    // If no filter or 'all', just return all notes with author profile join
+    const allNotes = await db
+      .select(selectWithAuthor)
+      .from(notes)
+      .leftJoin(profiles, eq(notes.authorId, profiles.id))
+      .orderBy(desc(notes.createdAt))
+      .limit(limit);
+
     return NextResponse.json(allNotes);
   } catch (error) {
     console.error('Error fetching notes:', error);
@@ -105,17 +103,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user metadata for author name (fallback to email if no name)
-    const authorName = user.user_metadata?.full_name || user.email || 'Unknown User';
+    // Get user profile (or create if doesn't exist)
+    let [profile] = await db
+      .select()
+      .from(profiles)
+      .where(eq(profiles.id, user.id))
+      .limit(1);
 
-    // Create the note
+    // If profile doesn't exist, create it
+    if (!profile) {
+      const authorName = user.user_metadata?.full_name || user.email || 'Unknown User';
+      [profile] = await db
+        .insert(profiles)
+        .values({
+          id: user.id,
+          email: user.email || 'unknown@example.com',
+          fullName: authorName,
+          avatarUrl: user.user_metadata?.avatar_url,
+        })
+        .returning();
+    }
+
+    // Determine the display name to store as historical snapshot
+    const originalAuthorName = profile.fullName || profile.email;
+
+    // Create the note with BOTH author_id (live link) and original_author_name (snapshot)
     const [newNote] = await db
       .insert(notes)
       .values({
         title,
         content,
-        userId: user.id,
-        authorName,
+        userId: user.id, // Legacy field
+        authorId: profile.id, // Live reference to profiles
+        originalAuthorName, // Historical snapshot
         isPublic: isPublic ?? true,
       })
       .returning();
