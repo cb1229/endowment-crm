@@ -16,7 +16,9 @@ interface Note {
   id: string;
   title: string;
   content: string;
+  authorId: string | null;
   authorName: string;
+  originalAuthorName: string;
   createdAt: string;
 }
 
