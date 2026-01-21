@@ -51,7 +51,6 @@ export function NoteSheet({ open, onOpenChange, onSuccess }: NoteSheetProps) {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    authorName: 'Team Member',
   });
   const [entityTags, setEntityTags] = useState<EntityTag[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
@@ -131,7 +130,6 @@ export function NoteSheet({ open, onOpenChange, onSuccess }: NoteSheetProps) {
         setFormData({
           title: '',
           content: '',
-          authorName: 'Team Member',
         });
         setEntityTags([]);
       }
@@ -161,16 +159,6 @@ export function NoteSheet({ open, onOpenChange, onSuccess }: NoteSheetProps) {
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
               placeholder="Meeting with Sequoia Capital"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="authorName">Author *</Label>
-            <Input
-              id="authorName"
-              value={formData.authorName}
-              onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-              required
             />
           </div>
 

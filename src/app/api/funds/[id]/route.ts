@@ -50,7 +50,7 @@ export async function GET(
         id: notes.id,
         title: notes.title,
         content: notes.content,
-        authorId: notes.authorId,
+        userId: notes.userId,
         authorName: notes.authorName,
         isPublic: notes.isPublic,
         createdAt: notes.createdAt,

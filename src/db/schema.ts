@@ -52,7 +52,7 @@ export const notes = pgTable('notes', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('title').notNull(),
   content: text('content').notNull(),
-  authorId: text('author_id').notNull(), // Will connect to auth user later
+  userId: uuid('user_id').notNull(), // References auth.users.id
   authorName: text('author_name').notNull(), // Denormalized for performance
   isPublic: boolean('is_public').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),

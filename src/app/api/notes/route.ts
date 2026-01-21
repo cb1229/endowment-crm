@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { notes, noteEntityTags, firms, funds } from '@/db/schema';
 import { desc, eq, or, and, sql } from 'drizzle-orm';
+import { createClient } from '@/lib/supabase/server';
 
 // Mark this route as dynamic
 export const dynamic = 'force-dynamic';
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
         id: notes.id,
         title: notes.title,
         content: notes.content,
-        authorId: notes.authorId,
+        userId: notes.userId,
         authorName: notes.authorName,
         isPublic: notes.isPublic,
         createdAt: notes.createdAt,
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
           id: notes.id,
           title: notes.title,
           content: notes.content,
-          authorId: notes.authorId,
+          userId: notes.userId,
           authorName: notes.authorName,
           isPublic: notes.isPublic,
           createdAt: notes.createdAt,
@@ -83,15 +84,29 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { title, content, authorName, authorId, isPublic, entityTags } = body;
+    // Get the authenticated user from the session
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (!title || !content || !authorName) {
+    if (authError || !user) {
       return NextResponse.json(
-        { error: 'Title, content, and author name are required' },
+        { error: 'Unauthorized - You must be logged in to create notes' },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { title, content, isPublic, entityTags } = body;
+
+    if (!title || !content) {
+      return NextResponse.json(
+        { error: 'Title and content are required' },
         { status: 400 }
       );
     }
+
+    // Get user metadata for author name (fallback to email if no name)
+    const authorName = user.user_metadata?.full_name || user.email || 'Unknown User';
 
     // Create the note
     const [newNote] = await db
@@ -99,8 +114,8 @@ export async function POST(request: NextRequest) {
       .values({
         title,
         content,
+        userId: user.id,
         authorName,
-        authorId: authorId || 'default-user',
         isPublic: isPublic ?? true,
       })
       .returning();
