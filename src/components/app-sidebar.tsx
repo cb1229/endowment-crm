@@ -53,23 +53,23 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-white/5 bg-[#050507]">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-zinc-200 bg-white">
       <div className="flex h-full flex-col">
         {/* Logo */}
-        <div className="flex h-16 items-center border-b border-white/5 px-6">
-          <Link href="/" className="text-base font-semibold tracking-tight text-white">
+        <div className="flex h-12 items-center border-b border-zinc-200 px-4">
+          <Link href="/" className="text-sm font-semibold tracking-tight text-foreground">
             Endowment CRM
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-6">
+        <nav className="flex-1 space-y-4 overflow-y-auto px-2 py-4">
           {navigation.map((section) => (
             <div key={section.title}>
-              <h3 className="mb-2 px-3 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase">
+              <h3 className="mb-1.5 px-2 text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
                 {section.title}
               </h3>
-              <ul className="space-y-1">
+              <ul className="space-y-0.5">
                 {section.items.map((item) => {
                   const isActive = pathname === item.href ||
                     (item.href !== '/' && pathname.startsWith(item.href));
@@ -79,15 +79,15 @@ export function AppSidebar() {
                       <Link
                         href={item.href}
                         className={cn(
-                          'group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                          'group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors relative',
                           isActive
-                            ? 'bg-indigo-500/10 text-indigo-400'
-                            : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+                            ? 'bg-indigo-50 text-indigo-700 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-indigo-700'
+                            : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
                         )}
                       >
                         <item.icon className={cn(
                           'h-4 w-4 flex-shrink-0',
-                          isActive ? 'text-indigo-400' : 'text-zinc-500 group-hover:text-zinc-400'
+                          isActive ? 'text-indigo-700' : 'text-zinc-400 group-hover:text-zinc-600'
                         )} />
                         <span>{item.title}</span>
                       </Link>
@@ -100,12 +100,12 @@ export function AppSidebar() {
         </nav>
 
         {/* Settings at bottom */}
-        <div className="border-t border-white/5 p-3">
+        <div className="border-t border-zinc-200 p-2">
           <Link
             href="/settings"
-            className="group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
           >
-            <Settings className="h-4 w-4 flex-shrink-0 text-zinc-500 group-hover:text-zinc-400" />
+            <Settings className="h-4 w-4 flex-shrink-0 text-zinc-400 group-hover:text-zinc-600" />
             <span>Settings</span>
           </Link>
         </div>

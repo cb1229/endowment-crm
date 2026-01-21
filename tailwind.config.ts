@@ -22,7 +22,7 @@ const config = {
         sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Wrangle.ai Dark Theme - Zinc & Indigo
+        // Wrangle/Linear Light Theme - Technical Light Mode
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
